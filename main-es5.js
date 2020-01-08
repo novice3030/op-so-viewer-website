@@ -750,15 +750,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         value: function ngAfterViewInit() {
           var _this = this;
 
-          this.sub = this.searchInputCtrl.valueChanges.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["debounceTime"])(300), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(function () {
-            if (!_this.searchInputCtrl.value) {
-              _this.selectedResult = null;
-              _this.apiResult = null;
-            }
-          }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(function () {
+          this.sub = this.searchInputCtrl.valueChanges.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["debounceTime"])(300), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(function () {
             return _this.stackoverflowApiService.queryTags(_this.searchInputCtrl.value);
           })).subscribe(function (result) {
-            return _this.apiResult = result;
+            _this.apiResult = result;
+            _this.selectedResult = null;
           });
         }
       }, {
@@ -918,6 +914,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(
     /*! @angular/common/http */
     "./node_modules/@angular/common/fesm2015/http.js");
+    /* harmony import */
+
+
+    var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(
+    /*! rxjs */
+    "./node_modules/rxjs/_esm2015/index.js");
 
     var StackoverflowApiService =
     /*#__PURE__*/
@@ -931,7 +933,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _createClass(StackoverflowApiService, [{
         key: "queryTags",
         value: function queryTags(tag) {
-          return this.http.get("https://api.stackexchange.com/2.2/tags/".concat(tag, "/faq?site=stackoverflow"));
+          if (tag) {
+            return this.http.get("https://api.stackexchange.com/2.2/tags/".concat(tag, "/faq?site=stackoverflow"));
+          }
+
+          return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["of"])(null);
         }
       }]);
 
@@ -945,7 +951,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     };
 
     StackoverflowApiService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
-      providedIn: 'root'
+      providedIn: "root"
     })], StackoverflowApiService);
     /***/
   },

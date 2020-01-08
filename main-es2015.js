@@ -336,13 +336,11 @@ let AppComponent = class AppComponent {
     }
     ngAfterViewInit() {
         this.sub = this.searchInputCtrl.valueChanges
-            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["debounceTime"])(300), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["tap"])(() => {
-            if (!this.searchInputCtrl.value) {
-                this.selectedResult = null;
-                this.apiResult = null;
-            }
-        }), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(() => this.stackoverflowApiService.queryTags(this.searchInputCtrl.value)))
-            .subscribe(result => (this.apiResult = result));
+            .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["debounceTime"])(300), Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_3__["mergeMap"])(() => this.stackoverflowApiService.queryTags(this.searchInputCtrl.value)))
+            .subscribe(result => {
+            this.apiResult = result;
+            this.selectedResult = null;
+        });
     }
     onItemClicked(item) {
         this.selectedResult = item;
@@ -434,6 +432,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "./node_modules/@angular/common/fesm2015/http.js");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
+
 
 
 
@@ -442,7 +442,10 @@ let StackoverflowApiService = class StackoverflowApiService {
         this.http = http;
     }
     queryTags(tag) {
-        return this.http.get(`https://api.stackexchange.com/2.2/tags/${tag}/faq?site=stackoverflow`);
+        if (tag) {
+            return this.http.get(`https://api.stackexchange.com/2.2/tags/${tag}/faq?site=stackoverflow`);
+        }
+        return Object(rxjs__WEBPACK_IMPORTED_MODULE_3__["of"])(null);
     }
 };
 StackoverflowApiService.ctorParameters = () => [
@@ -450,7 +453,7 @@ StackoverflowApiService.ctorParameters = () => [
 ];
 StackoverflowApiService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
-        providedIn: 'root'
+        providedIn: "root"
     })
 ], StackoverflowApiService);
 
